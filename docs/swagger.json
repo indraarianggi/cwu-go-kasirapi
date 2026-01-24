@@ -1,4 +1,8 @@
 {
+    "schemes": [
+        "https",
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "Simple RESTful API for managing products and categories.",
@@ -6,7 +10,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "cwu-go-kasirapi.zeabur.app",
     "basePath": "/",
     "paths": {
         "/api/categories": {

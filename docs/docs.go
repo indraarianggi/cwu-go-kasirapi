@@ -411,9 +411,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "cwu-go-kasirapi.zeabur.app",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"https", "http"},
 	Title:            "Kasir API",
 	Description:      "Simple RESTful API for managing products and categories.",
 	InfoInstanceName: "swagger",

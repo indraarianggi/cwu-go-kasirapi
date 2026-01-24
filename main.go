@@ -3,13 +3,15 @@ package main
 // @title Kasir API
 // @version 1.0
 // @description Simple RESTful API for managing products and categories.
-// @host localhost:8080
+// @host cwu-go-kasirapi.zeabur.app
 // @BasePath /
+// @schemes https http
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -431,9 +433,14 @@ func main() {
 	})
 
 	// start server
-	fmt.Println("Starting server on :8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	error := http.ListenAndServe(":8080", nil)
+	fmt.Printf("Starting server on :%s\n", port)
+
+	error := http.ListenAndServe(":"+port, nil)
 	if error != nil {
 		fmt.Println("Error starting server: ", error)
 	}

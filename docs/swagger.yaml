@@ -22,7 +22,7 @@ definitions:
       stock:
         type: integer
     type: object
-host: localhost:8080
+host: cwu-go-kasirapi.zeabur.app
 info:
   contact: {}
   description: Simple RESTful API for managing products and categories.
@@ -263,4 +263,7 @@ paths:
       summary: Update a product
       tags:
       - products
+schemes:
+- https
+- http
 swagger: "2.0"
