@@ -85,6 +85,33 @@ Kasir API is a simple RESTful API built with Go (Golang) for managing products a
     ```
 - **DELETE** `/api/categories/{id}`: Delete a category.
 
+## API Documentation
+
+This project uses OpenAPI (Swagger) 2.0 to document its endpoints and Scalar to provide a modern documentation UI.
+
+### Viewing Documentation
+
+Once the server is running, you can access the interactive API reference at:
+
+- **Scalar UI**: [http://localhost:8080/reference](http://localhost:8080/reference) (Recommended)
+- **Swagger JSON**: [http://localhost:8080/docs/swagger.json](http://localhost:8080/docs/swagger.json)
+
+### Generating Documentation
+
+If you modify the API endpoints or the comments in `main.go`, you must regenerate the documentation:
+
+1.  **Install Swag CLI** (if not already installed):
+    ```bash
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+
+2.  **Generate Docs**:
+    Run the following command in the project root:
+    ```bash
+    swag init
+    ```
+    This will update the files in the `docs/` directory.
+
 ## Project Structure
 
 - `main.go`: Contains the main application logic, data structures, and route handlers.
