@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  main.Category:
+  models.Category:
     properties:
       description:
         type: string
@@ -9,8 +9,10 @@ definitions:
       name:
         type: string
     type: object
-  main.Product:
+  models.Product:
     properties:
+      category:
+        $ref: '#/definitions/models.Category'
       category_id:
         type: integer
       id:
@@ -39,7 +41,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/main.Category'
+              $ref: '#/definitions/models.Category'
             type: array
       summary: List categories
       tags:
@@ -54,14 +56,14 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/main.Category'
+          $ref: '#/definitions/models.Category'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/main.Category'
+            $ref: '#/definitions/models.Category'
       summary: Create a category
       tags:
       - categories
@@ -104,7 +106,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.Category'
+            $ref: '#/definitions/models.Category'
         "404":
           description: Category not found
           schema:
@@ -127,14 +129,14 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/main.Category'
+          $ref: '#/definitions/models.Category'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.Category'
+            $ref: '#/definitions/models.Category'
         "400":
           description: Invalid request
           schema:
@@ -148,7 +150,7 @@ paths:
       - categories
   /api/products:
     get:
-      description: Get all products
+      description: Get all products with category details
       produces:
       - application/json
       responses:
@@ -156,7 +158,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/main.Product'
+              $ref: '#/definitions/models.Product'
             type: array
       summary: List products
       tags:
@@ -164,21 +166,21 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new product
+      description: Create a new product with optional category
       parameters:
       - description: New Product
         in: body
         name: product
         required: true
         schema:
-          $ref: '#/definitions/main.Product'
+          $ref: '#/definitions/models.Product'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/main.Product'
+            $ref: '#/definitions/models.Product'
       summary: Create a product
       tags:
       - products
@@ -208,7 +210,7 @@ paths:
       tags:
       - products
     get:
-      description: Get a product by ID
+      description: Get a product by ID with category details
       parameters:
       - description: Product ID
         in: path
@@ -221,7 +223,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.Product'
+            $ref: '#/definitions/models.Product'
         "404":
           description: Product not found
           schema:
@@ -244,14 +246,14 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/main.Product'
+          $ref: '#/definitions/models.Product'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.Product'
+            $ref: '#/definitions/models.Product'
         "400":
           description: Invalid request
           schema:

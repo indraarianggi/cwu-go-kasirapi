@@ -31,7 +31,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.Category"
+                                "$ref": "#/definitions/models.Category"
                             }
                         }
                     }
@@ -56,7 +56,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     }
                 ],
@@ -64,7 +64,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     }
                 }
@@ -93,7 +93,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     },
                     "404": {
@@ -130,7 +130,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     }
                 ],
@@ -138,7 +138,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     },
                     "400": {
@@ -194,7 +194,7 @@ const docTemplate = `{
         },
         "/api/products": {
             "get": {
-                "description": "Get all products",
+                "description": "Get all products with category details",
                 "produces": [
                     "application/json"
                 ],
@@ -208,14 +208,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.Product"
+                                "$ref": "#/definitions/models.Product"
                             }
                         }
                     }
                 }
             },
             "post": {
-                "description": "Create a new product",
+                "description": "Create a new product with optional category",
                 "consumes": [
                     "application/json"
                 ],
@@ -233,7 +233,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -241,7 +241,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 }
@@ -249,7 +249,7 @@ const docTemplate = `{
         },
         "/api/products/{id}": {
             "get": {
-                "description": "Get a product by ID",
+                "description": "Get a product by ID with category details",
                 "produces": [
                     "application/json"
                 ],
@@ -270,7 +270,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     },
                     "404": {
@@ -307,7 +307,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -315,7 +315,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     },
                     "400": {
@@ -371,7 +371,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.Category": {
+        "models.Category": {
             "type": "object",
             "properties": {
                 "description": {
@@ -385,9 +385,12 @@ const docTemplate = `{
                 }
             }
         },
-        "main.Product": {
+        "models.Product": {
             "type": "object",
             "properties": {
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
                 "category_id": {
                     "type": "integer"
                 },
