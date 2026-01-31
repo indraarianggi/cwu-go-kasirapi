@@ -15,7 +15,11 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 }
 
 func (repo *ProductRepository) GetAll() ([]models.Product, error) {
-	query := "SELECT id, name, price, stock FROM products"
+	query := `
+		SELECT p.id, p.name, p.price, p.stock, p.category_id, c.id, c.name, c.description
+		FROM products p
+		LEFT JOIN categories c ON p.category_id = c.id
+	`
 	rows, err := repo.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -25,10 +29,29 @@ func (repo *ProductRepository) GetAll() ([]models.Product, error) {
 	products := make([]models.Product, 0)
 	for rows.Next() {
 		var p models.Product
-		err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+		var categoryID sql.NullInt64
+		var catID sql.NullInt64
+		var catName sql.NullString
+		var catDesc sql.NullString
+
+		err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock, &categoryID, &catID, &catName, &catDesc)
 		if err != nil {
 			return nil, err
 		}
+
+		if categoryID.Valid {
+			id := int(categoryID.Int64)
+			p.CategoryID = &id
+
+			if catID.Valid {
+				p.Category = &models.Category{
+					ID:          int(catID.Int64),
+					Name:        catName.String,
+					Description: catDesc.String,
+				}
+			}
+		}
+
 		products = append(products, p)
 	}
 
@@ -36,28 +59,52 @@ func (repo *ProductRepository) GetAll() ([]models.Product, error) {
 }
 
 func (repo *ProductRepository) Create(product *models.Product) error {
-	query := "INSERT INTO products (name, price, stock) VALUES ($1, $2, $3) RETURNING id"
-	err := repo.db.QueryRow(query, product.Name, product.Price, product.Stock).Scan(&product.ID)
+	query := "INSERT INTO products (name, price, stock, category_id) VALUES ($1, $2, $3, $4) RETURNING id"
+	err := repo.db.QueryRow(query, product.Name, product.Price, product.Stock, product.CategoryID).Scan(&product.ID)
 	return err
 }
 
 func (repo *ProductRepository) GetByID(id int) (*models.Product, error) {
-	query := "SELECT id, name, price, stock FROM products WHERE id = $1"
+	query := `
+		SELECT p.id, p.name, p.price, p.stock, p.category_id, c.id, c.name, c.description
+		FROM products p
+		LEFT JOIN categories c ON p.category_id = c.id
+		WHERE p.id = $1
+	`
 
 	var p models.Product
-	err := repo.db.QueryRow(query, id).Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+	var categoryID sql.NullInt64
+	var catID sql.NullInt64
+	var catName sql.NullString
+	var catDesc sql.NullString
+
+	err := repo.db.QueryRow(query, id).Scan(&p.ID, &p.Name, &p.Price, &p.Stock, &categoryID, &catID, &catName, &catDesc)
 	if err == sql.ErrNoRows {
 		return nil, errors.New("Product not found")
 	}
 	if err != nil {
 		return nil, err
 	}
+
+	if categoryID.Valid {
+		cid := int(categoryID.Int64)
+		p.CategoryID = &cid
+
+		if catID.Valid {
+			p.Category = &models.Category{
+				ID:          int(catID.Int64),
+				Name:        catName.String,
+				Description: catDesc.String,
+			}
+		}
+	}
+
 	return &p, nil
 }
 
 func (repo *ProductRepository) Update(product *models.Product) error {
-	query := "UPDATE products SET name = $1, price = $2, stock = $3 WHERE id = $4"
-	result, err := repo.db.Exec(query, product.Name, product.Price, product.Stock, product.ID)
+	query := "UPDATE products SET name = $1, price = $2, stock = $3, category_id = $4 WHERE id = $5"
+	result, err := repo.db.Exec(query, product.Name, product.Price, product.Stock, product.CategoryID, product.ID)
 	if err != nil {
 		return err
 	}
