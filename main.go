@@ -10,12 +10,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 
+	"kasir-api/database"
 	_ "kasir-api/docs"
+
+	"github.com/spf13/viper"
 )
 
 type Category struct {
@@ -342,7 +346,33 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Product not found", http.StatusNotFound)
 }
 
+type Config struct {
+	Port   string `mapstructure:"PORT"`
+	DBConn string `mapstructure:"DB_CONN"`
+}
+
 func main() {
+	// load config
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigFile(".env")
+		_ = viper.ReadInConfig()
+	}
+
+	config := Config{
+		Port:   viper.GetString("PORT"),
+		DBConn: viper.GetString("DB_CONN"),
+	}
+
+	// initialize database
+	db, err := database.InitDB(config.DBConn)
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer db.Close()
+
 	// GET /health
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -432,16 +462,10 @@ func main() {
 		w.Write([]byte(html))
 	})
 
-	// start server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	fmt.Printf("Starting server on :%s\n", config.Port)
 
-	fmt.Printf("Starting server on :%s\n", port)
-
-	error := http.ListenAndServe(":"+port, nil)
-	if error != nil {
-		fmt.Println("Error starting server: ", error)
+	err = http.ListenAndServe(":"+config.Port, nil)
+	if err != nil {
+		fmt.Println("Error starting server: ", err)
 	}
 }
