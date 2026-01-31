@@ -24,7 +24,7 @@ definitions:
       stock:
         type: integer
     type: object
-host: cwu-go-kasirapi.zeabur.app
+host: cwu-go-kasirapi-indraarianggi1211-nq45hljg.leapcell.dev
 info:
   contact: {}
   description: Simple RESTful API for managing products and categories.
@@ -267,5 +267,4 @@ paths:
       - products
 schemes:
 - https
-- http
 swagger: "2.0"

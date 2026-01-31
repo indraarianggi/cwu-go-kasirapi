@@ -3,9 +3,9 @@ package main
 // @title Kasir API
 // @version 1.0
 // @description Simple RESTful API for managing products and categories.
-// @host cwu-go-kasirapi.zeabur.app
+// @host cwu-go-kasirapi-indraarianggi1211-nq45hljg.leapcell.dev
 // @BasePath /
-// @schemes https http
+// @schemes https
 
 import (
 	"encoding/json"
