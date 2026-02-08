@@ -419,9 +419,69 @@
                     }
                 }
             }
+        },
+        "/api/report": {
+            "get": {
+                "description": "Get sales summary including total revenue, transaction count, and best selling product for a date range. If no dates provided, returns all-time data.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Get sales summary report",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date (yyyy-MM-dd format, e.g., 2026-01-01). If omitted, includes all transactions from the beginning.",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date (yyyy-MM-dd format, e.g., 2026-01-31). If omitted, includes all transactions up to now.",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SalesSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.BestSellingProduct": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "product_name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Category": {
             "type": "object",
             "properties": {
@@ -480,6 +540,20 @@
                     "type": "integer"
                 },
                 "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SalesSummary": {
+            "type": "object",
+            "properties": {
+                "best_selling_product": {
+                    "$ref": "#/definitions/models.BestSellingProduct"
+                },
+                "total_revenue": {
+                    "type": "integer"
+                },
+                "total_transaction": {
                     "type": "integer"
                 }
             }
