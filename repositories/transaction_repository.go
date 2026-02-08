@@ -3,6 +3,8 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"kasir-api/models"
 )
 
@@ -65,11 +67,22 @@ func (repo *TransactionRepository) CreateTransaction(items []models.CheckoutItem
 		return nil, err
 	}
 
-	// Insert transaction details into database
-	for i := range details {
-		details[i].TransactionID = transactionID
-		_, err = tx.Exec("INSERT INTO transaction_details (transaction_id, product_id, quantity, subtotal) VALUES ($1, $2, $3, $4)",
-			transactionID, details[i].ProductID, details[i].Quantity, details[i].Subtotal)
+	// Insert transaction details into database using bulk insert
+	if len(details) > 0 {
+		args := make([]interface{}, 0, len(details)*4)
+		valueStrings := make([]string, 0, len(details))
+
+		for i, detail := range details {
+			details[i].TransactionID = transactionID
+			valueStrings = append(valueStrings,
+				fmt.Sprintf("($%d, $%d, $%d, $%d)",
+					i*4+1, i*4+2, i*4+3, i*4+4))
+			args = append(args, transactionID, detail.ProductID, detail.Quantity, detail.Subtotal)
+		}
+
+		query := "INSERT INTO transaction_details (transaction_id, product_id, quantity, subtotal) VALUES " +
+			strings.Join(valueStrings, ", ")
+		_, err = tx.Exec(query, args...)
 		if err != nil {
 			return nil, err
 		}
