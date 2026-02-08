@@ -9,12 +9,28 @@ definitions:
       name:
         type: string
     type: object
+  models.CheckoutItem:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  models.CheckoutRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.CheckoutItem'
+        type: array
+    type: object
   models.Product:
     properties:
       category:
         $ref: '#/definitions/models.Category'
       category_id:
         type: integer
+      created_at:
+        type: string
       id:
         type: integer
       name:
@@ -22,6 +38,34 @@ definitions:
       price:
         type: integer
       stock:
+        type: integer
+    type: object
+  models.Transaction:
+    properties:
+      created_at:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.TransactionDetail'
+        type: array
+      id:
+        type: integer
+      total_amount:
+        type: integer
+    type: object
+  models.TransactionDetail:
+    properties:
+      id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      subtotal:
+        type: integer
+      transaction_id:
         type: integer
     type: object
 host: cwu-go-kasirapi-indraarianggi1211-nq45hljg.leapcell.dev
@@ -148,9 +192,44 @@ paths:
       summary: Update a category
       tags:
       - categories
+  /api/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Checkout multiple items with transaction
+      parameters:
+      - description: Items to checkout
+        in: body
+        name: items
+        required: true
+        schema:
+          $ref: '#/definitions/models.CheckoutRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Checkout items
+      tags:
+      - transactions
   /api/products:
     get:
       description: Get all products with category details
+      parameters:
+      - description: Filter products by name (partial match)
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:

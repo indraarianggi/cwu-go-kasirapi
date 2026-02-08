@@ -192,6 +192,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/checkout": {
+            "post": {
+                "description": "Checkout multiple items with transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Checkout items",
+                "parameters": [
+                    {
+                        "description": "Items to checkout",
+                        "name": "items",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CheckoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/products": {
             "get": {
                 "description": "Get all products with category details",
@@ -202,6 +248,14 @@ const docTemplate = `{
                     "products"
                 ],
                 "summary": "List products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter products by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -385,6 +439,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CheckoutItem": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CheckoutRequest": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CheckoutItem"
+                    }
+                }
+            }
+        },
         "models.Product": {
             "type": "object",
             "properties": {
@@ -393,6 +469,9 @@ const docTemplate = `{
                 },
                 "category_id": {
                     "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -404,6 +483,49 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Transaction": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TransactionDetail"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "total_amount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TransactionDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "subtotal": {
+                    "type": "integer"
+                },
+                "transaction_id": {
                     "type": "integer"
                 }
             }
